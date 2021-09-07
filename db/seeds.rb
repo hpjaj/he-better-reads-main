@@ -1,7 +1,33 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+###################################################################################
+###########################  Destroy all existing data  ###########################
+###################################################################################
+
+if Rails.env.development?
+  Rake::Task['db:environment:set'].invoke(['RAILS_ENV=development'])
+  Rake::Task['db:drop'].invoke
+  Rake::Task['db:create'].invoke
+  Rake::Task['db:schema:load'].invoke
+end
+
+
+###################################################################################
+#############################  Setup Authors and Books  ###########################
+###################################################################################
+
+20.times { FactoryBot.create(:author) }
+
+Author.all.each do |author|
+  (1..5).to_a.sample.times { FactoryBot.create(:book, author: author) }
+end
+
+
+###################################################################################
+#################################  Report results  ################################
+###################################################################################
+
+p 'Successful db seeding. Created:'
+
+p "#{User.count} User records"
+p "#{Author.count} Author records"
+p "#{Book.count} Book records"
+p "#{Review.count} Review records"
