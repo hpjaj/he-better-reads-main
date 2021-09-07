@@ -10,11 +10,14 @@ gem 'puma', '~> 5.0'
 gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'active_model_serializers', '~> 0.10.12'
+gem 'jwt', '~> 2.2', '>= 2.2.3'
 gem 'rack-cors', '~> 1.1', '>= 1.1.1'
 gem 'sidekiq', '~> 6.2', '>= 6.2.2'
 
 group :development, :test do
   gem 'awesome_print', '~> 1.9', '>= 1.9.2'
+  gem 'dotenv-rails', '~> 2.7', '>= 2.7.6'
+
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'factory_bot_rails', '~> 6.2'
