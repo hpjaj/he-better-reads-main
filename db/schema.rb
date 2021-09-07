@@ -38,6 +38,18 @@ ActiveRecord::Schema.define(version: 2021_06_09_221247) do
     t.index ["uuid"], name: "index_books_on_uuid", unique: true
   end
 
+  create_table "reviews", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "reviewable_type"
+    t.bigint "reviewable_id"
+    t.text "description"
+    t.integer "rating", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["reviewable_type", "reviewable_id"], name: "index_reviews_on_reviewable"
+    t.index ["user_id"], name: "index_reviews_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name", null: false
     t.string "last_name", null: false
@@ -46,4 +58,5 @@ ActiveRecord::Schema.define(version: 2021_06_09_221247) do
   end
 
   add_foreign_key "books", "authors"
+  add_foreign_key "reviews", "users"
 end
