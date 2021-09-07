@@ -4,25 +4,25 @@ module API
       author = Author.new(allowed_params)
 
       if author.save
-        render json: author
+        render json: author, serializer: AuthorSerializer
       else
         render json: { errors: author.errors.full_messages }
       end
     end
 
     def index
-      render json: Author.all
+      render json: Author.all, each_serializer: AuthorSerializer
     end
 
     def show
-      render json: Author.find(params[:id])
+      render json: Author.find(params[:id]), serializer: AuthorSerializer
     end
 
     def update
       author = Author.find(params[:id])
 
       if author.update(allowed_params)
-        render json: author
+        render json: author, serializer: AuthorSerializer
       else
         render json: { errors: author.errors.full_messages }
       end

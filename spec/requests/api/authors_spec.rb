@@ -10,13 +10,11 @@ RSpec.describe '/api/authors' do
       expect(response_hash).to eq(
         [
           {
-            created_at: author.created_at.iso8601(3),
+            id: author.id,
             description: author.description,
             first_name: author.first_name,
             last_name: author.last_name,
             genres: author.genres,
-            id: author.id,
-            updated_at: author.updated_at.iso8601(3),
             website: author.website
           }
         ]
@@ -33,13 +31,11 @@ RSpec.describe '/api/authors' do
 
         expect(response_hash).to eq(
           {
-            created_at: author.created_at.iso8601(3),
+            id: author.id,
             description: author.description,
             first_name: author.first_name,
             last_name: author.last_name,
             genres: author.genres,
-            id: author.id,
-            updated_at: author.updated_at.iso8601(3),
             website: author.website
           }
         )

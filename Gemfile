@@ -9,6 +9,7 @@ gem 'puma', '~> 5.0'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false
 
+gem 'active_model_serializers', '~> 0.10.12'
 gem 'rack-cors', '~> 1.1', '>= 1.1.1'
 group :development, :test do
   gem 'awesome_print', '~> 1.9', '>= 1.9.2'

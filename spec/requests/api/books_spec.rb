@@ -10,14 +10,18 @@ RSpec.describe '/api/books' do
       expect(response_hash).to eq(
         [
           {
-            author_id: book.author_id,
-            created_at: book.created_at.iso8601(3),
             description: book.description,
-            id: book.id,
             publish_date: book.publish_date,
             rating: book.rating,
             title: book.title,
-            updated_at: book.updated_at.iso8601(3)
+            author: {
+              id: author.id,
+              first_name: author.first_name,
+              last_name: author.last_name,
+              website: author.website,
+              genres: author.genres,
+              description: author.description
+            }
           }
         ]
       )
@@ -33,14 +37,18 @@ RSpec.describe '/api/books' do
 
         expect(response_hash).to eq(
           {
-            author_id: book.author_id,
-            created_at: book.created_at.iso8601(3),
             description: book.description,
-            id: book.id,
             publish_date: book.publish_date,
             rating: book.rating,
             title: book.title,
-            updated_at: book.updated_at.iso8601(3)
+            author: {
+              id: author.id,
+              first_name: author.first_name,
+              last_name: author.last_name,
+              website: author.website,
+              genres: author.genres,
+              description: author.description
+            }
           }
         )
       end
