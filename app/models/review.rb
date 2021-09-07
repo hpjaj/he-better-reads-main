@@ -1,4 +1,6 @@
 class Review < ApplicationRecord
+  include Averageable
+
   belongs_to :user
   belongs_to :reviewable, polymorphic: true, counter_cache: true
 
@@ -14,6 +16,9 @@ class Review < ApplicationRecord
   )
   validate :one_per_user, on: :create
 
+  after_commit :update_book_rating
+  after_destroy :update_book_rating
+
 private
 
   # Favor custom validation over uniqueness/scope to ensure custom error message does not contain `User`.
@@ -25,5 +30,11 @@ private
     if review
       errors.add(:base, "You can only submit one review for this #{reviewable_type.downcase}")
     end
+  end
+
+  def update_book_rating
+    return unless reviewable_type == 'Book'
+
+    Books::SetAverageBookRatingJob.perform_later(book_id: reviewable_id)
   end
 end

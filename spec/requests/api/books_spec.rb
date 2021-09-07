@@ -16,6 +16,8 @@ RSpec.describe '/api/books' do
             rating: book.rating,
             title: book.title,
             slug: book.title.parameterize,
+            average_rating: book.average_rating,
+            reviews_count: book.reviews_count,
             author: {
               id: author.id,
               first_name: author.first_name,
@@ -45,6 +47,8 @@ RSpec.describe '/api/books' do
             rating: book.rating,
             title: book.title,
             slug: book.title.parameterize,
+            average_rating: book.average_rating,
+            reviews_count: book.reviews_count,
             author: {
               id: author.id,
               first_name: author.first_name,

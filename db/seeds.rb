@@ -41,6 +41,8 @@ books.each_with_index do |book, index|
   }
 end
 
+Rake::Task['books:add_average_rating'].invoke
+
 
 ###################################################################################
 #################################  Report results  ################################

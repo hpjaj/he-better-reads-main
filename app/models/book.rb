@@ -1,4 +1,6 @@
 class Book < ApplicationRecord
+  include Averageable
+
   belongs_to :author
   has_many :reviews, as: :reviewable, dependent: :destroy
 

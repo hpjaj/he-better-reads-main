@@ -34,4 +34,39 @@ RSpec.describe Review, type: :model do
       end
     end
   end
+
+  describe 'callbacks' do
+    describe '#update_book_rating' do
+      let(:book) { create :book }
+
+      context '#after_commit' do
+        before do
+          create :review, reviewable: book, rating: 2
+        end
+
+        it 'updates the reviewable#average_rating', :aggregate_failures do
+          expect(book.reload.average_rating).to eq 2.0
+
+          create :review, reviewable: book, rating: 4
+
+          expect(book.reload.average_rating).to eq 3.0
+        end
+      end
+
+      context '#after_destroy' do
+        before do
+          create :review, reviewable: book, rating: 2
+          create :review, reviewable: book, rating: 4
+        end
+
+        it 'updates the reviewable#average_rating', :aggregate_failures do
+          expect(book.reload.average_rating).to eq 3.0
+
+          book.reviews.last.destroy!
+
+          expect(book.reload.average_rating).to eq 2.0
+        end
+      end
+    end
+  end
 end
