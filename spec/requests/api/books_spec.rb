@@ -10,10 +10,12 @@ RSpec.describe '/api/books' do
       expect(response_hash).to eq(
         [
           {
+            uuid: book.uuid,
             description: book.description,
             publish_date: book.publish_date,
             rating: book.rating,
             title: book.title,
+            slug: book.title.parameterize,
             author: {
               id: author.id,
               first_name: author.first_name,
@@ -28,19 +30,21 @@ RSpec.describe '/api/books' do
     end
   end
 
-  describe 'GET to /:id' do
+  describe 'GET to /:uuid' do
     context 'when found' do
       it 'returns an book' do
         book = create(:book)
 
-        get api_book_path(book)
+        get api_book_path(book.uuid), headers: auth_headers(user)
 
         expect(response_hash).to eq(
           {
+            uuid: book.uuid,
             description: book.description,
             publish_date: book.publish_date,
             rating: book.rating,
             title: book.title,
+            slug: book.title.parameterize,
             author: {
               id: author.id,
               first_name: author.first_name,
@@ -106,7 +110,7 @@ RSpec.describe '/api/books' do
     end
   end
 
-  describe 'PUT to /:id' do
+  describe 'PUT to /:uuid' do
     let(:book) { create(:book) }
 
     context 'when successful' do
@@ -117,13 +121,13 @@ RSpec.describe '/api/books' do
       end
 
       it 'updates an existing book' do
-        put api_book_path(book), params: params
+        put api_book_path(book.uuid), params: params, headers: auth_headers(user)
 
         expect(book.reload.description).to eq(params[:description])
       end
 
       it 'returns the updated book' do
-        put api_book_path(book), params: params
+        put api_book_path(book.uuid), params: params, headers: auth_headers(user)
 
         expect(response_hash).to include(params)
       end
@@ -137,7 +141,7 @@ RSpec.describe '/api/books' do
       end
 
       it 'returns an error' do
-        put api_book_path(book), params: params
+        put api_book_path(book.uuid), params: params, headers: auth_headers(user)
 
         expect(response_hash).to eq(
           {

@@ -33,7 +33,9 @@ ActiveRecord::Schema.define(version: 2021_06_09_221247) do
     t.bigint "author_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "uuid", null: false
     t.index ["author_id"], name: "index_books_on_author_id"
+    t.index ["uuid"], name: "index_books_on_uuid", unique: true
   end
 
   create_table "users", force: :cascade do |t|
