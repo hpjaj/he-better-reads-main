@@ -1,10 +1,14 @@
 module API
   class UsersController < ApplicationController
+    skip_before_action :authenticate, only: :create
+
     def create
       user = User.new(allowed_params)
 
       if user.save
-        render json: user
+        token = JWTAuth.encode(user_id: user.id)
+
+        render json: user, serializer: UserSerializer, token: token
       else
         render json: { errors: user.errors.full_messages }
       end
@@ -33,7 +37,10 @@ module API
     def allowed_params
       params.permit(
         :first_name,
-        :last_name
+        :last_name,
+        :email,
+        :password,
+        :password_confirmation
       )
     end
   end

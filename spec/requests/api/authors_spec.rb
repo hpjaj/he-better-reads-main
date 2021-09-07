@@ -1,11 +1,12 @@
 RSpec.describe '/api/authors' do
+  let(:user) { create :user }
   let(:response_hash) { JSON(response.body, symbolize_names: true) }
 
   describe 'GET to /' do
     it 'returns all authors' do
       author = create(:author)
 
-      get api_authors_path
+      get api_authors_path, headers: auth_headers(user)
 
       expect(response_hash).to eq(
         [
@@ -27,7 +28,7 @@ RSpec.describe '/api/authors' do
       it 'returns an author' do
         author = create(:author)
 
-        get api_author_path(author)
+        get api_author_path(author), headers: auth_headers(user)
 
         expect(response_hash).to eq(
           {
@@ -44,7 +45,7 @@ RSpec.describe '/api/authors' do
 
     context 'when not found' do
       it 'returns not_found' do
-        get api_author_path(-1)
+        get api_author_path(-1), headers: auth_headers(user)
 
         expect(response).to be_not_found
       end
@@ -64,11 +65,11 @@ RSpec.describe '/api/authors' do
       end
 
       it 'creates an author' do
-        expect { post api_authors_path, params: params }.to change { Author.count }
+        expect { post api_authors_path, params: params, headers: auth_headers(user) }.to change { Author.count }
       end
 
       it 'returns the created author' do
-        post api_authors_path, params: params
+        post api_authors_path, params: params, headers: auth_headers(user)
 
         expect(response_hash).to include(params)
       end
@@ -78,7 +79,7 @@ RSpec.describe '/api/authors' do
       let(:params) {}
 
       it 'returns an error' do
-        post api_authors_path, params: params
+        post api_authors_path, params: params, headers: auth_headers(user)
 
         expect(response_hash).to eq(
           {
@@ -100,13 +101,13 @@ RSpec.describe '/api/authors' do
       end
 
       it 'updates an existing author' do
-        put api_author_path(author), params: params
+        put api_author_path(author), params: params, headers: auth_headers(user)
 
         expect(author.reload.description).to eq(params[:description])
       end
 
       it 'returns the updated author' do
-        put api_author_path(author), params: params
+        put api_author_path(author), params: params, headers: auth_headers(user)
 
         expect(response_hash).to include(params)
       end
@@ -120,7 +121,7 @@ RSpec.describe '/api/authors' do
       end
 
       it 'returns an error' do
-        put api_author_path(author), params: params
+        put api_author_path(author), params: params, headers: auth_headers(user)
 
         expect(response_hash).to eq(
           {

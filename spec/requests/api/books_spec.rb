@@ -1,11 +1,12 @@
 RSpec.describe '/api/books' do
+  let(:user) { create :user }
+  let(:author) { create :author }
+  let!(:book) { create :book, author: author}
   let(:response_hash) { JSON(response.body, symbolize_names: true) }
 
   describe 'GET to /' do
     it 'returns all books' do
-      book = create(:book)
-
-      get api_books_path
+      get api_books_path, headers: auth_headers(user)
 
       expect(response_hash).to eq(
         [
@@ -35,8 +36,6 @@ RSpec.describe '/api/books' do
   describe 'GET to /:uuid' do
     context 'when found' do
       it 'returns an book' do
-        book = create(:book)
-
         get api_book_path(book.uuid), headers: auth_headers(user)
 
         expect(response_hash).to eq(
@@ -64,7 +63,7 @@ RSpec.describe '/api/books' do
 
     context 'when not found' do
       it 'returns not_found' do
-        get api_book_path(-1)
+        get api_book_path(-1), headers: auth_headers(user)
 
         expect(response).to be_not_found
       end
@@ -83,13 +82,15 @@ RSpec.describe '/api/books' do
       end
 
       it 'creates a book' do
-        expect { post api_books_path, params: params }.to change { Book.count }
+        expect { post api_books_path, params: params, headers: auth_headers(user) }.to change { Book.count }
       end
 
-      it 'returns the created book' do
-        post api_books_path, params: params
+      it 'returns the created book', :aggregate_failures do
+        post api_books_path, params: params, headers: auth_headers(user)
 
-        expect(response_hash).to include(params)
+        expect(response_hash.dig(:description)).to eq params.dig(:description)
+        expect(response_hash.dig(:title)).to eq params.dig(:title)
+        expect(response_hash.dig(:author)).to be_present
       end
     end
 
@@ -103,7 +104,7 @@ RSpec.describe '/api/books' do
       end
 
       it 'returns an error' do
-        post api_books_path, params: params
+        post api_books_path, params: params, headers: auth_headers(user)
 
         expect(response_hash).to eq(
           {

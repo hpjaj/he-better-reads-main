@@ -5,16 +5,16 @@ RSpec.describe '/api/users' do
     it 'returns all users' do
       user = create(:user)
 
-      get api_users_path
+      get api_users_path, headers: auth_headers(user)
 
       expect(response_hash).to eq(
         [
           {
-            created_at: user.created_at.iso8601(3),
             first_name: user.first_name,
             last_name: user.last_name,
             id: user.id,
-            updated_at: user.updated_at.iso8601(3)
+            email: user.email,
+            token: nil
           }
         ]
       )
@@ -26,23 +26,25 @@ RSpec.describe '/api/users' do
       it 'returns an user' do
         user = create(:user)
 
-        get api_user_path(user)
+        get api_user_path(user), headers: auth_headers(user)
 
         expect(response_hash).to eq(
           {
-            created_at: user.created_at.iso8601(3),
             first_name: user.first_name,
             last_name: user.last_name,
             id: user.id,
-            updated_at: user.updated_at.iso8601(3)
+            email: user.email,
+            token: nil
           }
         )
       end
     end
 
     context 'when not found' do
+      let(:user) { create :user }
+
       it 'returns not_found' do
-        get api_user_path(-1)
+        get api_user_path(-1), headers: auth_headers(user)
 
         expect(response).to be_not_found
       end
@@ -54,7 +56,10 @@ RSpec.describe '/api/users' do
       let(:params) do
         {
           first_name: 'Harry',
-          last_name: 'Potter'
+          last_name: 'Potter',
+          email: 'user@example.com',
+          password: 'password',
+          password_confirmation: 'password'
         }
       end
 
@@ -62,10 +67,18 @@ RSpec.describe '/api/users' do
         expect { post api_users_path, params: params }.to change { User.count }
       end
 
-      it 'returns the created user' do
+      it 'returns the created user', :aggregate_failures do
         post api_users_path, params: params
 
-        expect(response_hash).to include(params)
+        expect(response_hash.dig(:first_name)).to eq params[:first_name]
+        expect(response_hash.dig(:last_name)).to eq params[:last_name]
+        expect(response_hash.dig(:email)).to eq params[:email]
+      end
+
+      it 'returns a JWT token' do
+        post api_users_path, params: params
+
+        expect(response_hash.dig(:token)).to be_present
       end
     end
 
@@ -75,13 +88,11 @@ RSpec.describe '/api/users' do
       it 'returns an error' do
         post api_users_path, params: params
 
-        expect(response_hash).to eq(
-          {
-            errors: [
-              'First name can\'t be blank',
-              'Last name can\'t be blank'
-            ]
-          }
+        expect(response_hash.dig(:errors)).to contain_exactly(
+          'First name can\'t be blank',
+          'Last name can\'t be blank',
+          'Email can\'t be blank',
+          'Password can\'t be blank'
         )
       end
     end
@@ -98,13 +109,13 @@ RSpec.describe '/api/users' do
       end
 
       it 'updates an existing user' do
-        put api_user_path(user), params: params
+        put api_user_path(user), params: params, headers: auth_headers(user)
 
         expect(user.reload.first_name).to eq(params[:first_name])
       end
 
       it 'returns the updated user' do
-        put api_user_path(user), params: params
+        put api_user_path(user), params: params, headers: auth_headers(user)
 
         expect(response_hash).to include(params)
       end
@@ -118,7 +129,7 @@ RSpec.describe '/api/users' do
       end
 
       it 'returns an error' do
-        put api_user_path(user), params: params
+        put api_user_path(user), params: params, headers: auth_headers(user)
 
         expect(response_hash).to eq(
           {

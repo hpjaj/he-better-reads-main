@@ -10,6 +10,7 @@ gem 'puma', '~> 5.0'
 gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'active_model_serializers', '~> 0.10.12'
+gem 'bcrypt', '~> 3.1', '>= 3.1.16'
 gem 'jwt', '~> 2.2', '>= 2.2.3'
 gem 'rack-cors', '~> 1.1', '>= 1.1.1'
 gem 'sidekiq', '~> 6.2', '>= 6.2.2'
@@ -25,7 +26,8 @@ group :development, :test do
   gem 'rspec-rails', '~> 5.0.0'
 end
 
-group :development do
+group :test do
+  gem 'rails-controller-testing', '~> 1.0', '>= 1.0.5'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
