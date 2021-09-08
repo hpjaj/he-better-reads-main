@@ -10,8 +10,10 @@ RSpec.describe '/api/sessions', type: :request do
     context 'when successful' do
       let(:params) do
         {
-          email: email,
-          password: password
+          session: {
+            email: email,
+            password: password
+          }
         }
       end
 
@@ -46,8 +48,10 @@ RSpec.describe '/api/sessions', type: :request do
       context 'with an incorrect password' do
         let(:params) do
           {
-            email: email,
-            password: 'wrong_password'
+            session: {
+              email: email,
+              password: 'wrong_password'
+            }
           }
         end
 
@@ -67,8 +71,10 @@ RSpec.describe '/api/sessions', type: :request do
       context 'with an email address that is not present in the db' do
         let(:params) do
           {
-            email: 'bad_email@example.com',
-            password: password
+            session: {
+              email: 'bad_email@example.com',
+              password: password
+            }
           }
         end
 
