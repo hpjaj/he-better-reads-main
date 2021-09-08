@@ -10,7 +10,7 @@ module API
 
         render json: user, serializer: UserSerializer, token: token
       else
-        render json: { errors: user.errors.full_messages }
+        render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
